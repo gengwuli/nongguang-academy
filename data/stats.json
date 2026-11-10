@@ -1,0 +1,26 @@
+{
+  "total_videos": 1284,
+  "planting_videos": 380,
+  "food_videos": 528,
+  "travelogue_videos": 376,
+  "needs_enhancement_count": 884,
+  "study_notes_count": 0,
+  "sub_categories": {
+    "🏛️ Historic Cities & Cultural Landmarks (名城与古迹)": 244,
+    "🎭 Ethnic Odyssey & Folk Heritage (民族风情与人文)": 56,
+    "🥫 农产品深加工与腌制烘干": 158,
+    "🌶️ 香料调料与木本油料": 9,
+    "🏔️ Natural Wonders & Island Adventures (山川与海岛)": 76,
+    "🥘 农家乡土菜肴与宴席": 209,
+    "🍜 地方特色小吃与面点": 161,
+    "🛡️ 育苗嫁接与植保水肥": 43,
+    "🥬 蔬菜瓜果栽培": 151,
+    "🍎 果树修剪与管理": 75,
+    "🌱 中药材与芳香蜜源植物": 18,
+    "🍄 粮油菌菇与中药材": 44,
+    "🌸 绿化苗木与名贵花卉": 29,
+    "🌼 花卉茶树与竹木": 11
+  },
+  "lan_url": "https://gengwuli.github.io/nongguang-academy/",
+  "public_url": "https://gengwuli.github.io/nongguang-academy/"
+}

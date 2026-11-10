@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1411" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="农广学堂" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <title>农广学堂 App — CCTV《农广天地》种植·美食·游记移动学习平台</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0f1411;
+      --bg-secondary: #171f1a;
+      --bg-card: #1d2721;
+      --bg-hover: #26332b;
+      --border-color: #2b3930;
+      --text-primary: #eef5f0;
+      --text-secondary: #9cb0a2;
+      --accent-green: #2eac68;
+      --accent-green-hover: #38c478;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-blue: #3b82f6;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* 顶部 YouTube 风格导航栏 */
+    header.topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      background: rgba(15, 20, 17, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2eac68, #15803d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(46, 172, 104, 0.3);
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--accent-green);
+      background: rgba(46, 172, 104, 0.14);
+      padding: 2px 7px;
+      border-radius: 99px;
+      margin-left: 4px;
+    }
+
+    .search-box {
+      flex: 1;
+      max-width: 580px;
+      display: flex;
+      align-items: center;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 99px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--accent-green);
+    }
+
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      padding: 10px 18px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-box button {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border: none;
+      border-left: 1px solid var(--border-color);
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .search-box button:hover {
+      background: var(--accent-green);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.18s;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent-green);
+    }
+
+    .btn-primary {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-green-hover);
+    }
+
+    .btn-amber {
+      background: rgba(245, 158, 11, 0.16);
+      border-color: rgba(245, 158, 11, 0.45);
+      color: #fbbf24;
+    }
+
+    .btn-amber:hover {
+      background: rgba(245, 158, 11, 0.28);
+    }
+
+    /* 主体双栏布局 */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 64px);
+    }
+
+    aside.sidebar {
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      padding: 10px 12px 4px;
+      letter-spacing: 0.6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 9px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: rgba(46, 172, 104, 0.16);
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    .nav-badge {
+      font-size: 11px;
+      background: var(--bg-card);
+      padding: 2px 7px;
+      border-radius: 99px;
+      color: var(--text-secondary);
+    }
+
+    /* 主内容区 */
+    main.content {
+      padding: 20px 26px 48px;
+      overflow-y: auto;
+    }
+
+    /* 顶部统计与快捷标签栏 */
+    .chips-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .chip {
+      padding: 7px 14px;
+      border-radius: 99px;
+      font-size: 13px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .chip:hover {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+    }
+
+    .chip.active {
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      border-color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* 播放器详情学习剧场 (Watch View) */
+    .watch-theater {
+      display: none;
+      grid-template-columns: 1fr 400px;
+      gap: 22px;
+      margin-bottom: 30px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .watch-theater.open {
+      display: grid;
+    }
+
+    .player-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .player-stage video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter 0.2s ease;
+    }
+
+    /* 画质增强实时滤镜预设 */
+    .filter-leaf {
+      filter: url(#svg-sharpen-leaf) contrast(1.09) saturate(1.16) brightness(1.02);
+    }
+    .filter-oldtv {
+      filter: url(#svg-sharpen-oldtv) contrast(1.14) saturate(1.20) brightness(1.04);
+    }
+    .filter-food {
+      filter: url(#svg-sharpen-food) contrast(1.08) saturate(1.28) brightness(1.03);
+    }
+
+    .player-overlay-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: flex;
+      gap: 8px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .badge-pill {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(15, 20, 17, 0.82);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .badge-hd {
+      color: #4ade80;
+      border-color: rgba(74, 222, 128, 0.4);
+    }
+
+    .badge-warn {
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.5);
+    }
+
+    /* 画质增强控制台条 */
+    .enhancer-toolbar {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .enhancer-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .enhancer-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .preset-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .preset-btn.active {
+      background: rgba(46, 172, 104, 0.2);
+      border-color: var(--accent-green);
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    .watch-meta {
+      margin-top: 14px;
+    }
+
+    .watch-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .watch-subbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    /* 农技参数卡 / 美食配方卡 */
+    .tech-card {
+      margin-top: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .tech-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #4ade80;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+    }
+
+    .metric-item {
+      background: var(--bg-secondary);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-green);
+    }
+
+    .metric-key {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 3px;
+    }
+
+    .metric-val {
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* 右侧章节与随堂笔记面板 */
+    .watch-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chapter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 210px;
+      overflow-y: auto;
+    }
+
+    .chapter-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+
+    .chapter-item:hover {
+      background: var(--bg-hover);
+    }
+
+    .chapter-time {
+      font-family: monospace;
+      font-size: 12px;
+      color: #4ade80;
+      background: rgba(46, 172, 104, 0.14);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .note-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .note-form input {
+      flex: 1;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      padding: 8px 10px;
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .note-card {
+      background: var(--bg-secondary);
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      border-left: 2px solid var(--accent-amber);
+    }
+
+    /* YouTube 风格视频网格 */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 20px;
+    }
+
+    .video-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-green);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #101712;
+      overflow: hidden;
+    }
+
+    .thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .video-card:hover .thumb-wrap img {
+      transform: scale(1.04);
+    }
+
+    .thumb-duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.82);
+      color: #fff;
+      font-size: 11px;
+      font-family: monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .thumb-quality {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      backdrop-filter: blur(6px);
+    }
+
+    .q-hd {
+      background: rgba(21, 128, 61, 0.88);
+      color: #fff;
+    }
+
+    .q-sd {
+      background: rgba(217, 119, 6, 0.92);
+      color: #fff;
+    }
+
+    .card-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 8px;
+    }
+
+    .card-cat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+    }
+
+    .cat-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .cat-planting {
+      background: rgba(46, 172, 104, 0.16);
+      color: #4ade80;
+    }
+
+    .cat-food {
+      background: rgba(245, 158, 11, 0.16);
+      color: #fbbf24;
+    }
+
+    .cat-travelogue {
+      background: rgba(56, 189, 248, 0.16);
+      color: #38bdf8;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-desc {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: 6px;
+    }
+
+    .mini-tag {
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      padding-top: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* 分类全景目录视图样式 */
+    .directory-container {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .dir-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+    }
+
+    .dir-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .dir-section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #4ade80;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dir-crop-group {
+      margin-bottom: 14px;
+    }
+
+    .dir-crop-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-amber);
+      margin-bottom: 8px;
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.12);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    .dir-items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 10px;
+    }
+
+    .dir-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .dir-item:hover {
+      border-color: var(--accent-green);
+      background: var(--bg-hover);
+    }
+
+    .dir-item-title {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dir-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* 模态弹窗（多源采集器 & 画质工作台） */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 680px;
+      padding: 22px;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .code-log {
+      background: #0b0f0c;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #86efac;
+      white-space: pre-wrap;
+      margin-top: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    /* 移动端专属导航抽屉遮罩、底部 Tab 栏与手势触控栏 */
+    .mobile-menu-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(3px);
+      z-index: 240;
+    }
+
+    .sidebar-backdrop.open {
+      display: block;
+    }
+
+    .mobile-tabbar {
+      display: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 180;
+      background: rgba(15, 20, 17, 0.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border-color);
+      padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-item .tab-icon {
+      font-size: 19px;
+      line-height: 1.1;
+    }
+
+    .tab-item.active {
+      color: #4ade80;
+      background: rgba(46, 172, 104, 0.14);
+    }
+
+    /* 播放器移动端自由触控快捷条 */
+    .touch-control-bar {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .touch-btn {
+      padding: 7px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .touch-btn:active {
+      transform: scale(0.95);
+      background: var(--accent-green);
+      color: #fff;
+    }
+
+    .gesture-toast {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.78);
+      color: #4ade80;
+      padding: 8px 16px;
+      border-radius: 99px;
+      font-size: 14px;
+      font-weight: 700;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 25;
+    }
+
+    .gesture-toast.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 1024px) {
+      header.topbar {
+        height: 56px;
+        padding: 0 12px;
+        gap: 8px;
+      }
+      .mobile-menu-btn {
+        display: inline-flex;
+      }
+      .brand-sub {
+        display: none;
+      }
+      .brand-title {
+        font-size: 16px;
+      }
+      .search-box input {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      .search-box button {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      .top-actions .hide-on-mobile {
+        display: none;
+      }
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      aside.sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 280px;
+        z-index: 250;
+        overflow-y: auto;
+        transform: translateX(-105%);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 8px 0 28px rgba(0, 0, 0, 0.6);
+        padding-bottom: 90px;
+      }
+      aside.sidebar.drawer-open {
+        transform: translateX(0);
+      }
+      main.content {
+        padding: 12px 12px 88px;
+      }
+      .chips-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .chip {
+        flex-shrink: 0;
+        padding: 6px 12px;
+        font-size: 12.5px;
+      }
+      .watch-theater {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 14px;
+      }
+      .player-stage {
+        position: sticky;
+        top: 58px;
+        z-index: 90;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+      }
+      .video-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .dir-items-grid {
+        grid-template-columns: 1fr;
+      }
+      .mobile-tabbar {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 内置 SVG 卷积锐化与色彩增强滤镜矩阵（用于对低清农广天地老视频进行实时叶脉/芽点/美食纹理锐化） -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <!-- 植保叶片与果树修剪芽点高锐度卷积核 -->
+      <filter id="svg-sharpen-leaf">
+        <feConvolveMatrix order="3 3" preserveAlpha="true"
+          kernelMatrix="0 -0.65 0 -0.65 3.6 -0.65 0 -0.65 0" />
+      </filter>
+      <!-- 早期标清老片去雾与边缘强化核 -->
+      <filter id="svg-sharpen-oldtv">
+        <feConvolveMatrix order="3 3" preserveAlpha="true"
+          kernelMatrix="-0.2 -0.5 -0.2 -0.5 3.8 -0.5 -0.2 -0.5 -0.2" />
+      </filter>
+      <!-- 乡土美食微锐化核 -->
+      <filter id="svg-sharpen-food">
+        <feConvolveMatrix order="3 3" preserveAlpha="true"
+          kernelMatrix="0 -0.4 0 -0.4 2.6 -0.4 0 -0.4 0" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- 顶部导航栏 -->
+  <header class="topbar">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="mobile-menu-btn" onclick="toggleMobileDrawer()" title="打开14大分类抽屉">☰</button>
+      <div class="brand" onclick="resetHome()">
+        <div class="brand-logo">🌱</div>
+        <div>
+          <span class="brand-title">农广学堂</span>
+          <span class="brand-sub">CCTV《农广天地》移动App</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="搜种植（桂花/杜鹃/金银花）、美食（豆腐/腊肉/烤鸭）、游记..."
+        onkeydown="if(event.key==='Enter') triggerSearch()"
+      />
+      <button onclick="triggerSearch()">🔍 搜索</button>
+    </div>
+
+    <div class="top-actions">
+      <button class="btn btn-primary" onclick="openMobileAppModal()">
+        📱 手机扫码装App
+      </button>
+      <button class="btn btn-amber hide-on-mobile" onclick="openCrawlerModal()">
+        🕷️ 多源采集同步
+      </button>
+      <a class="btn hide-on-mobile" href="https://tv.cctv.com/lm/ngtd/" target="_blank" rel="noopener">
+        📺 央视网官网 ↗
+      </a>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileDrawer()"></div>
+
+  <div class="layout">
+    <!-- 左侧分类导航栏（手机端自动变为可自由呼出的侧滑抽屉 · 14大标准二级分类体系） -->
+    <aside class="sidebar" id="mainSidebar">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:4px 8px 10px; border-bottom:1px solid var(--border-color); margin-bottom:6px;">
+        <span style="font-size:13px; font-weight:700; color:#4ade80;">🧭 14大标准课程分类</span>
+        <button class="btn" style="padding:3px 8px; font-size:11px;" onclick="closeMobileDrawer()">✕ 收起</button>
+      </div>
+      <div class="nav-item active" data-nav="all" onclick="selectNav('all', 'all', this)">
+        <span>🏠 全部精选课程</span>
+        <span class="nav-badge" id="statTotal">-</span>
+      </div>
+      <div class="nav-item" onclick="switchViewMode('directory', this)">
+        <span>🗂️ 分类全景大纲目录</span>
+        <span class="nav-badge" style="color:#4ade80;">14大类</span>
+      </div>
+
+      <div class="nav-section-title">🌱 种植技术学院 (8大类)</div>
+      <div class="nav-item" onclick="selectNav('planting', 'all', this)">
+        <span>🌿 全部种植技术</span>
+        <span class="nav-badge" id="statPlanting">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('planting', '🥬 蔬菜瓜果栽培', this)">
+        <span>🥬 蔬菜瓜果栽培</span>
+        <span class="nav-badge" data-sub-count="🥬 蔬菜瓜果栽培">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('planting', '🍎 果树修剪与管理', this)">
+        <span>🍎 果树修剪与管理</span>
+        <span class="nav-badge" data-sub-count="🍎 果树修剪与管理">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('planting', '🌸 绿化苗木与名贵花卉', this)">
+        <span>🌸 绿化苗木与名贵花卉</span>
+        <span class="nav-badge" data-sub-count="🌸 绿化苗木与名贵花卉">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('planting', '🌼 花卉茶树与竹木', this)">
+        <span>🌼 花卉茶树与竹木</span>
+        <span class="nav-badge" data-sub-count="🌼 花卉茶树与竹木">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('planting', '🌱 中药材与芳香蜜源植物', this)">
+        <span>🌱 中药材与芳香蜜源</span>
+        <span class="nav-badge" data-sub-count="🌱 中药材与芳香蜜源植物">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('planting', '🍄 粮油菌菇与中药材', this)">
+        <span>🍄 粮油与珍稀食用菌</span>
+        <span class="nav-badge" data-sub-count="🍄 粮油菌菇与中药材">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('planting', '🌶️ 香料调料与木本油料', this)">
+        <span>🌶️ 香料调料与木本油料</span>
+        <span class="nav-badge" data-sub-count="🌶️ 香料调料与木本油料">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('planting', '🛡️ 育苗嫁接与植保水肥', this)">
+        <span>🛡️ 育苗嫁接与植保水肥</span>
+        <span class="nav-badge" data-sub-count="🛡️ 育苗嫁接与植保水肥">-</span>
+      </div>
+
+      <div class="nav-section-title">🍲 乡村美食工坊 (3大类)</div>
+      <div class="nav-item" onclick="selectNav('food', 'all', this)">
+        <span>🥢 全部乡村美食</span>
+        <span class="nav-badge" id="statFood">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('food', '🥘 农家乡土菜肴与宴席', this)">
+        <span>🥘 农家乡土菜肴与宴席</span>
+        <span class="nav-badge" data-sub-count="🥘 农家乡土菜肴与宴席">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('food', '🥫 农产品深加工与腌制烘干', this)">
+        <span>🥫 农产品深加工与烘干</span>
+        <span class="nav-badge" data-sub-count="🥫 农产品深加工与腌制烘干">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('food', '🍜 地方特色小吃与面点', this)">
+        <span>🍜 地方特色小吃与面点</span>
+        <span class="nav-badge" data-sub-count="🍜 地方特色小吃与面点">-</span>
+      </div>
+
+      <div class="nav-section-title">🌍 CCTV-9 Travelogue · 英语旅游</div>
+      <div class="nav-item" onclick="selectNav('travelogue', 'all', this)">
+        <span>🌍 全部 CCTV-9 Travelogue</span>
+        <span class="nav-badge" id="statTravelogue" style="color:#38bdf8;">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('travelogue', '🏛️ Historic Cities & Cultural Landmarks (名城与古迹)', this)">
+        <span>🏛️ Historic Cities 名城古迹</span>
+        <span class="nav-badge" data-sub-count="🏛️ Historic Cities & Cultural Landmarks (名城与古迹)">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('travelogue', '🎭 Ethnic Odyssey & Folk Heritage (民族风情与人文)', this)">
+        <span>🎭 Ethnic Odyssey 民族纪行</span>
+        <span class="nav-badge" data-sub-count="🎭 Ethnic Odyssey & Folk Heritage (民族风情与人文)">-</span>
+      </div>
+      <div class="nav-item" onclick="selectNav('travelogue', '🏔️ Natural Wonders & Island Adventures (山川与海岛)', this)">
+        <span>🏔️ Natural Wonders 山川海岛</span>
+        <span class="nav-badge" data-sub-count="🏔️ Natural Wonders & Island Adventures (山川与海岛)">-</span>
+      </div>
+
+      <div class="nav-section-title">✨ 画质与学习工具</div>
+      <div class="nav-item" onclick="selectQualityFilter('hd', this)">
+        <span>💎 1080P 超清片源</span>
+      </div>
+      <div class="nav-item" onclick="selectQualityFilter('needs_enhance', this)">
+        <span>🔧 早期标清待增强</span>
+        <span class="nav-badge" id="statEnhance">-</span>
+      </div>
+      <div class="nav-item" onclick="filterBookmarks(this)">
+        <span>⭐ 我的收藏课程</span>
+      </div>
+    </aside>
+
+    <!-- 主内容区域 -->
+    <main class="content">
+      <!-- 顶部快捷筛选 Chips -->
+      <div class="chips-bar" id="chipsBar">
+        <span class="chip active" onclick="quickChip('all', this)">全部课程</span>
+        <span class="chip" onclick="selectNav('travelogue', 'all'); document.querySelectorAll('.chips-bar .chip').forEach(c=>c.classList.remove('active')); this.classList.add('active');">🌍 CCTV-9 Travelogue (英语旅游)</span>
+        <span class="chip" onclick="quickSearch('Early Archive', this)">📼 1993-2010 早期典藏 Travelogue</span>
+        <span class="chip" onclick="quickSearch('Ethnic Odyssey', this)">🎭 Ethnic Odyssey 民族系列</span>
+        <span class="chip" onclick="quickSearch('Beijing', this)">🏛️ Being Beijing / Dali / Shanghai</span>
+        <span class="chip" onclick="quickSearch('杜鹃', this)">🌺 杜鹃花盆栽与造型</span>
+        <span class="chip" onclick="quickSearch('金银花', this)">🌿 金银花栽培与采收</span>
+        <span class="chip" onclick="quickSearch('桂花', this)">🌼 桂花栽培与美食</span>
+        <span class="chip" onclick="quickSearch('兰花', this)">🌸 兰花/牡丹/月季/茉莉</span>
+        <span class="chip" onclick="quickSearch('花椒', this)">🌶️ 花椒/麻椒/藤椒</span>
+        <span class="chip" onclick="quickSearch('石斛', this)">🌱 石斛/人参/黄精/三七</span>
+        <span class="chip" onclick="quickSearch('番茄', this)">🍅 番茄/辣椒/黄瓜</span>
+        <span class="chip" onclick="quickSearch('葡萄', this)">🍇 葡萄/草莓/蓝莓/樱桃</span>
+        <span class="chip" onclick="quickSearch('豆腐', this)">🍲 豆腐/腊肉/烤鸭/米粉</span>
+      </div>
+
+      <!-- 视频播放与农技学习剧场 (点击任意视频展开) -->
+      <section class="watch-theater" id="watchTheater">
+        <div class="watch-main">
+          <div class="player-stage" id="playerStage" ondblclick="handlePlayerDoubleTap(event)">
+            <div class="player-overlay-badge">
+              <span class="badge-pill badge-hd" id="playerResBadge">1080P 超清</span>
+              <span class="badge-pill" id="playerFilterBadge">画质增强：叶脉细节锐化 ON</span>
+            </div>
+            <div class="gesture-toast" id="gestureToast">⏩ 快进 10 秒</div>
+            <video id="mainVideoPlayer" controls playsinline webkit-playsinline preload="metadata" class="filter-leaf">
+              <source id="mainVideoSource" src="/media/sample_hd_1080p_enhanced.mp4" type="video/mp4" />
+            </video>
+          </div>
+
+          <!-- 手机端/触屏自由操控快捷栏（快进快退、倍速、画中画、全屏、收藏） -->
+          <div class="touch-control-bar">
+            <button class="touch-btn" onclick="seekRelative(-15)">⏪ -15秒</button>
+            <button class="touch-btn" onclick="togglePlayPause()" id="btnTouchPlay">⏯️ 播放/暂停</button>
+            <button class="touch-btn" onclick="seekRelative(15)">⏩ +15秒</button>
+            <button class="touch-btn" onclick="cyclePlaybackSpeed()" id="btnSpeed">🚀 倍速 1.0x</button>
+            <button class="touch-btn" onclick="togglePiP()">📺 画中画</button>
+            <button class="touch-btn" onclick="toggleFullscreen()">⛶ 全屏横屏</button>
+            <button class="touch-btn" onclick="closeTheater()" style="color:#f87171;">✕ 关闭</button>
+          </div>
+
+          <!-- 画质增强与低清片源修复控制栏 -->
+          <div class="enhancer-toolbar">
+            <div class="enhancer-group">
+              <span class="enhancer-label">✨ 实时画质增强引擎：</span>
+              <button class="preset-btn" onclick="setRealtimeFilter('none', this)">原片直出</button>
+              <button class="preset-btn active" onclick="setRealtimeFilter('filter-leaf', this)">🌿 植保叶脉/芽点锐化</button>
+              <button class="preset-btn" onclick="setRealtimeFilter('filter-oldtv', this)">📺 老片去雾去噪</button>
+              <button class="preset-btn" onclick="setRealtimeFilter('filter-food', this)">🍲 美食色彩增艳</button>
+            </div>
+            <div class="enhancer-group">
+              <button class="btn btn-amber" id="btnFfmpegEnhance" onclick="runBackendFfmpegEnhance()">
+                ⚡ 触发 FFmpeg 1080P 超分重制
+              </button>
+              <button class="btn" onclick="closeTheater()">✕ 收起播放器</button>
+            </div>
+          </div>
+
+          <div class="watch-meta">
+            <h1 class="watch-title" id="watchTitle">课程标题</h1>
+            <div class="watch-subbar">
+              <div id="watchInfoLine">CCTV-17 农广天地 · 1080P</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn" id="btnBookmarkCurrent" onclick="toggleBookmarkCurrent()">⭐ 收藏本课</button>
+                <a class="btn" id="linkOfficialSource" href="https://tv.cctv.com/lm/ngtd/" target="_blank" rel="noopener">
+                  🔗 跳转官方原片源 ↗
+                </a>
+                <a class="btn" id="linkBiliSearch" href="https://search.bilibili.com/" target="_blank" rel="noopener">
+                  🅱️ B站同名高清合集 ↗
+                </a>
+                <a class="btn" id="linkYtSearch" href="https://www.youtube.com/" target="_blank" rel="noopener">
+                  ▶️ YouTube CCTV农业 ↗
+                </a>
+              </div>
+            </div>
+            <p id="watchDesc" style="margin-top:10px; font-size:13.5px; color:var(--text-secondary);"></p>
+          </div>
+
+          <!-- 结构化农技参数卡 / 美食配方工艺卡 -->
+          <div class="tech-card">
+            <div class="tech-card-header">
+              <span id="techCardTitle">📋 核心农技实操参数卡（可直接用于生产指导）</span>
+              <button class="btn" style="padding:4px 10px; font-size:12px;" onclick="copyTechMetrics()">
+                📄 复制技术要点
+              </button>
+            </div>
+            <div class="metrics-grid" id="techMetricsGrid"></div>
+          </div>
+        </div>
+
+        <!-- 右侧：章节时间戳导航 + 随堂农技笔记 -->
+        <div class="watch-sidebar">
+          <div class="panel-box">
+            <div class="panel-title">
+              <span>⏱️ 关键技术章节直达</span>
+              <span style="font-size:11px; color:var(--text-secondary);">点击跳转进度</span>
+            </div>
+            <div class="chapter-list" id="chapterList"></div>
+          </div>
+
+          <div class="panel-box" style="flex:1;">
+            <div class="panel-title">
+              <span>📝 随堂农技/美食学习笔记</span>
+              <button class="btn" style="padding:3px 8px; font-size:11px;" onclick="exportNotesMarkdown()">
+                导出 Markdown
+              </button>
+            </div>
+            <div class="note-form">
+              <input id="noteInput" type="text" placeholder="记录关键配比、修剪位置或火候要点..." onkeydown="if(event.key==='Enter') saveStudyNote()" />
+              <button class="btn btn-primary" onclick="saveStudyNote()">记录</button>
+            </div>
+            <div class="notes-list" id="notesList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 视频列表网格与分类全景大纲视图切换 -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+        <h2 style="font-size:17px; font-weight:700;" id="gridSectionTitle">📺 全部《农广天地》种植、美食与风物游记课程</h2>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:13px; color:var(--text-secondary);" id="gridCountText">加载中...</span>
+          <button class="btn btn-primary" id="btnViewCards" onclick="switchViewMode('cards')">🎬 视频卡片视图</button>
+          <button class="btn" id="btnViewDir" onclick="switchViewMode('directory')">🗂️ 14大分类目录大纲</button>
+        </div>
+      </div>
+      <div class="video-grid" id="videoGrid"></div>
+      <div class="directory-container" id="directoryView" style="display:none;"></div>
+    </main>
+  </div>
+
+  <!-- 移动端底部固定导航栏 (App Bottom Tab Bar) -->
+  <nav class="mobile-tabbar" id="mobileTabBar">
+    <div class="tab-item active" data-tab="all" onclick="selectMobileTab('all', this)">
+      <span class="tab-icon">🏠</span>
+      <span>全部首页</span>
+    </div>
+    <div class="tab-item" data-tab="planting" onclick="selectMobileTab('planting', this)">
+      <span class="tab-icon">🌱</span>
+      <span>种植技术</span>
+    </div>
+    <div class="tab-item" data-tab="food" onclick="selectMobileTab('food', this)">
+      <span class="tab-icon">🍲</span>
+      <span>乡村美食</span>
+    </div>
+    <div class="tab-item" data-tab="travelogue" onclick="selectMobileTab('travelogue', this)">
+      <span class="tab-icon">🌍</span>
+      <span>Travelogue</span>
+    </div>
+    <div class="tab-item" data-tab="drawer" onclick="toggleMobileDrawer()">
+      <span class="tab-icon">🗂️</span>
+      <span>14大分类</span>
+    </div>
+  </nav>
+
+  <!-- 手机扫码安装 App 与局域网直连弹窗 -->
+  <div class="modal-backdrop" id="mobileAppModal">
+    <div class="modal-box" style="max-width:480px; text-align:center;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <h3 style="font-size:17px; color:#4ade80;">📱 手机扫码即看 · 安装《农广学堂》移动 App</h3>
+        <button class="btn" onclick="closeMobileAppModal()">✕ 关闭</button>
+      </div>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+        已为您开通<strong>公网 HTTPS 加密直连通道</strong>（无需同一 Wi-Fi，<strong>5G/4G 流量或任意 Wi-Fi 均可直接打开</strong>），用手机相机或微信扫描下方二维码即可在手机上自由操作观看：
+      </p>
+      <div style="background:#fff; padding:16px; border-radius:14px; display:inline-block; margin-bottom:12px;">
+        <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=https%3A%2F%2Fgengwuli.github.io%2Fnongguang-academy%2F" alt="手机扫码打开农广学堂App" style="width:210px; height:210px; display:block;" />
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">手机 24小时云端永久网址（电脑关机也可随时看，点击可复制）：</div>
+        <div
+          id="lanUrlBox"
+          onclick="navigator.clipboard.writeText(this.textContent); alert('已复制手机云端永久访问地址：' + this.textContent);"
+          style="background:var(--bg-card); border:1px solid var(--accent-green); color:#4ade80; font-family:monospace; font-size:14px; font-weight:700; padding:8px 14px; border-radius:8px; cursor:pointer; display:inline-block; word-break:break-all;"
+        >https://gengwuli.github.io/nongguang-academy/</div>
+      </div>
+      <div style="text-align:left; background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:12px 14px; font-size:12.5px; color:var(--text-secondary); line-height:1.6;">
+        <div style="color:var(--text-primary); font-weight:700; margin-bottom:4px;">📲 如何添加到手机桌面成为独立全屏 App：</div>
+        <div>• <strong>iPhone (Safari)</strong>：扫码打开后，点击底部中间的「<strong>分享 ⬆️</strong>」按钮 → 选择「<strong>添加到主屏幕</strong>」，即可从桌面全屏启动！</div>
+        <div>• <strong>Android (Chrome/系统浏览器)</strong>：扫码打开后，点击右上角菜单「<strong>⋮</strong>」→ 选择「<strong>安装应用 / 添加到主屏幕</strong>」。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 多源爬虫与 FFmpeg 画质增强日志弹窗 -->
+  <div class="modal-backdrop" id="crawlerModal">
+    <div class="modal-box">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <h3 style="font-size:17px;">🕷️ 《农广天地》多源视频采集与画质检测中控台</h3>
+        <button class="btn" onclick="closeCrawlerModal()">✕ 关闭</button>
+      </div>
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+        支持从 <strong>央视网官方接口 (api.cntv.cn / vdn.apps.cntv.cn)</strong>、<strong>YouTube (CCTV农业官方频道)</strong> 及 <strong>Bilibili</strong> 同步《农广天地》种植与美食视频，并自动探测最高码率分片（chapters4 1080P）。若发现低于 720P 的早期经典节目，自动标记为「待增强」并支持 FFmpeg 超清重制。
+      </p>
+      <div style="display:flex; gap:10px; margin-bottom:12px;">
+        <input
+          id="crawlKeywordInput"
+          type="text"
+          value="农广天地 设施蔬菜种植技术"
+          style="flex:1; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:10px 14px; color:var(--text-primary);"
+        />
+        <button class="btn btn-primary" onclick="runLiveCrawl()">🚀 立即同步采集</button>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+        <button class="preset-btn" onclick="document.getElementById('crawlKeywordInput').value='农广天地 大棚蔬菜种植'">预设：大棚蔬菜种植</button>
+        <button class="preset-btn" onclick="document.getElementById('crawlKeywordInput').value='农广天地 果树修剪嫁接'">预设：果树修剪嫁接</button>
+        <button class="preset-btn" onclick="document.getElementById('crawlKeywordInput').value='农广天地 食用菌栽培'">预设：食用菌栽培</button>
+        <button class="preset-btn" onclick="document.getElementById('crawlKeywordInput').value='农广天地 乡土特色美食'">预设：乡土特色美食</button>
+      </div>
+      <div class="code-log" id="crawlerLogBox">[系统就绪] 已加载 16 门精选《农广天地》种植与美食课程（含 4 门早期标清待增强对比课）。
+可执行 CLI 命令：
+  python3 crawler/cctv_scraper.py --keyword "农广天地 种植" --source all
+  python3 crawler/quality_pipeline.py --demo</div>
+    </div>
+  </div>
+
+  <script>
+    let allVideos = [];
+    let currentVideo = null;
+    let currentHls = null;
+    let currentMainCat = 'all';
+    let currentSubCat = 'all';
+    let currentQuality = 'all';
+    let currentViewMode = 'cards';
+    let currentSpeedIdx = 0;
+    const speedOptions = [1.0, 1.25, 1.5, 2.0, 0.75];
+    let serverLanUrl = 'https://gengwuli.github.io/nongguang-academy/';
+    let bookmarkedIds = JSON.parse(localStorage.getItem('ngtd_bookmarks') || '[]');
+    const isStaticCloud = location.hostname.endsWith('github.io') || location.hostname.endsWith('pages.dev') || location.hostname.endsWith('vercel.app');
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    function playStreamInPlayer(rawUrl) {
+      const player = document.getElementById('mainVideoPlayer');
+      const stage = document.getElementById('playerStage');
+      let biliIframe = document.getElementById('biliCloudIframe');
+      if (currentHls) {
+        currentHls.destroy();
+        currentHls = null;
+      }
+
+      let playUrl = (rawUrl || '').replace('http://hls.cntv.cdn20.com', 'https://hls.cntv.lxdns.com');
+
+      // 若在静态云端 (GitHub Pages) 播放早期 Bilibili Travelogue 典藏视频，自动切换为自适应 HTML5 嵌入式播放器
+      if (isStaticCloud && playUrl.startsWith('/api/bili_mp4')) {
+        const qs = new URLSearchParams(playUrl.split('?')[1] || '');
+        const bvid = qs.get('bvid') || '';
+        const cid = qs.get('cid') || '';
+        player.pause();
+        player.style.display = 'none';
+        if (!biliIframe) {
+          biliIframe = document.createElement('iframe');
+          biliIframe.id = 'biliCloudIframe';
+          biliIframe.setAttribute('allowfullscreen', 'true');
+          biliIframe.setAttribute('allow', 'autoplay; fullscreen');
+          biliIframe.style.cssText = 'width:100%; height:100%; border:0; position:absolute; inset:0; z-index:4; background:#000;';
+          stage.appendChild(biliIframe);
+        }
+        biliIframe.style.display = 'block';
+        biliIframe.src = `https://www.bilibili.com/blackboard/html5mobileplayer.html?bvid=${encodeURIComponent(bvid)}&cid=${encodeURIComponent(cid)}&high_quality=1&danmaku=0&autoplay=1`;
+        return;
+      }
+
+      if (biliIframe) {
+        biliIframe.src = 'about:blank';
+        biliIframe.style.display = 'none';
+      }
+      player.style.display = 'block';
+
+      const isM3u8 = playUrl.includes('.m3u8');
+
+      if (isM3u8 && playUrl.startsWith('http')) {
+        if (!isStaticCloud) {
+          playUrl = `/api/hls?url=${encodeURIComponent(playUrl)}`;
+        } else {
+          // GitHub Pages 云端模式：直连支持 HTTPS 与 CORS (*) 的央视网阿里云 CDN (hls.cntv.lxdns.com)，优先加载 1200P 高清分片
+          playUrl = playUrl.replace('/asp/hls/main/', '/asp/hls/1200/').replace('/main.m3u8', '/1200.m3u8');
+        }
+      }
+
+      const fallbackM3u8 = (rawUrl || '').replace('http://hls.cntv.cdn20.com', 'https://hls.cntv.lxdns.com');
+
+      if (isM3u8 && window.Hls && Hls.isSupported()) {
+        currentHls = new Hls({
+          enableWorker: true,
+          maxBufferLength: 30
+        });
+        currentHls.loadSource(playUrl);
+        currentHls.attachMedia(player);
+        currentHls.on(Hls.Events.MANIFEST_PARSED, function () {
+          player.play().catch(() => {});
+        });
+        currentHls.on(Hls.Events.ERROR, function (event, data) {
+          if (data.fatal && isStaticCloud && playUrl !== fallbackM3u8) {
+            playUrl = fallbackM3u8;
+            currentHls.loadSource(fallbackM3u8);
+          }
+        });
+      } else {
+        player.src = playUrl;
+        player.onerror = function () {
+          if (isStaticCloud && player.src !== fallbackM3u8) {
+            player.onerror = null;
+            player.src = fallbackM3u8;
+            player.play().catch(() => {});
+          }
+        };
+        player.load();
+        player.play().catch(() => {});
+      }
+    }
+
+    async function initApp() {
+      await fetchStats();
+      await loadVideos();
+    }
+
+    async function fetchStats() {
+      try {
+        const res = await fetch(isStaticCloud ? './data/stats.json' : '/api/stats');
+        const data = await res.json();
+        document.getElementById('statTotal').textContent = data.total_videos;
+        document.getElementById('statPlanting').textContent = data.planting_videos;
+        document.getElementById('statFood').textContent = data.food_videos;
+        const trvEl = document.getElementById('statTravelogue');
+        if (trvEl) trvEl.textContent = data.travelogue_videos || 0;
+        document.getElementById('statEnhance').textContent = data.needs_enhancement_count;
+        const subMap = data.sub_categories || {};
+        document.querySelectorAll('[data-sub-count]').forEach(el => {
+          const key = el.getAttribute('data-sub-count');
+          el.textContent = subMap[key] || 0;
+        });
+        if (data.public_url) {
+          serverLanUrl = data.public_url;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadVideos(query = '') {
+      const grid = document.getElementById('videoGrid');
+      if (isStaticCloud) {
+        if (!window._staticCatalog) {
+          grid.innerHTML = `<div style="grid-column:1/-1; padding:36px; text-align:center; color:#4ade80;">⏳ 正在加载云端 1,284 部全量高清课程库...</div>`;
+          const res = await fetch('./data/videos.json');
+          const data = await res.json();
+          window._staticCatalog = data.videos || [];
+        }
+        const qLower = (query || '').trim().toLowerCase();
+        allVideos = window._staticCatalog.filter(v => {
+          if (currentMainCat !== 'all' && v.main_category !== currentMainCat) return false;
+          if (currentSubCat !== 'all' && v.sub_category !== currentSubCat) return false;
+          if (currentQuality === 'hd' && (v.quality_score || 0) < 90) return false;
+          if (currentQuality === 'needs_enhance' && !v.needs_enhancement) return false;
+          if (qLower) {
+            const hay = `${v.title || ''} ${v.description || ''} ${v.crop_or_dish || ''} ${(v.tags || []).join(' ')} ${JSON.stringify(v.tech_metrics || {})}`.toLowerCase();
+            if (!hay.includes(qLower)) return false;
+          }
+          return true;
+        });
+        renderVideoGrid(allVideos);
+        renderDirectoryView(allVideos);
+        return;
+      }
+      if (query) {
+        grid.innerHTML = `<div style="grid-column:1/-1; padding:36px; text-align:center; color:#4ade80;">
+          ⏳ 正在检索「${query}」...（若本地未收录，系统正在自动从央视网《农广天地》实时拉取真实高清片源，请稍候 3~5 秒）
+        </div>`;
+      }
+      const params = new URLSearchParams({
+        main_category: currentMainCat,
+        sub_category: currentSubCat,
+        quality: currentQuality,
+        q: query
+      });
+      const res = await fetch(`/api/videos?${params.toString()}`);
+      const data = await res.json();
+      allVideos = data.videos || [];
+      renderVideoGrid(allVideos);
+      renderDirectoryView(allVideos);
+      if (query) {
+        fetchStats();
+      }
+    }
+
+    function switchViewMode(mode, navEl) {
+      currentViewMode = mode;
+      const grid = document.getElementById('videoGrid');
+      const dir = document.getElementById('directoryView');
+      const btnCards = document.getElementById('btnViewCards');
+      const btnDir = document.getElementById('btnViewDir');
+
+      if (mode === 'directory') {
+        grid.style.display = 'none';
+        dir.style.display = 'flex';
+        btnDir.className = 'btn btn-primary';
+        btnCards.className = 'btn';
+        if (navEl) {
+          document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
+          navEl.classList.add('active');
+          currentMainCat = 'all';
+          currentSubCat = 'all';
+          currentQuality = 'all';
+          document.getElementById('gridSectionTitle').textContent = '🗂️ 《农广天地》9大标准分类全景课程目录';
+          loadVideos('');
+        }
+      } else {
+        grid.style.display = 'grid';
+        dir.style.display = 'none';
+        btnCards.className = 'btn btn-primary';
+        btnDir.className = 'btn';
+      }
+    }
+
+    function renderDirectoryView(videos) {
+      const container = document.getElementById('directoryView');
+      if (!videos.length) {
+        container.innerHTML = '';
+        return;
+      }
+      // 按 14 大二级分类 -> 物种/菜品/游记目的地 三级结构分组（每个视频严格唯一归属一个分类）
+      const catOrder = [
+        '🥬 蔬菜瓜果栽培',
+        '🍎 果树修剪与管理',
+        '🌸 绿化苗木与名贵花卉',
+        '🌼 花卉茶树与竹木',
+        '🌱 中药材与芳香蜜源植物',
+        '🍄 粮油菌菇与中药材',
+        '🌶️ 香料调料与木本油料',
+        '🛡️ 育苗嫁接与植保水肥',
+        '🥘 农家乡土菜肴与宴席',
+        '🥫 农产品深加工与腌制烘干',
+        '🍜 地方特色小吃与面点',
+        '🏛️ Historic Cities & Cultural Landmarks (名城与古迹)',
+        '🎭 Ethnic Odyssey & Folk Heritage (民族风情与人文)',
+        '🏔️ Natural Wonders & Island Adventures (山川与海岛)'
+      ];
+      const grouped = {};
+      videos.forEach(v => {
+        const sc = v.sub_category || '其他';
+        if (!grouped[sc]) grouped[sc] = {};
+        const crop = v.crop_or_dish || '综合';
+        if (!grouped[sc][crop]) grouped[sc][crop] = [];
+        grouped[sc][crop].push(v);
+      });
+
+      const orderedKeys = [
+        ...catOrder.filter(k => grouped[k]),
+        ...Object.keys(grouped).filter(k => !catOrder.includes(k))
+      ];
+
+      container.innerHTML = orderedKeys.map(subCat => {
+        const cropMap = grouped[subCat];
+        const totalInCat = Object.values(cropMap).reduce((acc, arr) => acc + arr.length, 0);
+        const cropsHtml = Object.entries(cropMap).map(([cropName, items]) => {
+          const listHtml = items.map(v => `
+            <div class="dir-item" onclick="openVideo('${v.id}')">
+              <div class="dir-item-title">▶️ ${v.title}</div>
+              <div class="dir-item-meta">
+                <span style="color:${v.needs_enhancement ? '#fbbf24' : '#4ade80'}; font-weight:700;">${v.resolution}</span>
+                <span>· ${v.duration}</span>
+              </div>
+            </div>
+          `).join('');
+          return `
+            <div class="dir-crop-group">
+              <div class="dir-crop-title">📌 ${cropName}（${items.length} 课）</div>
+              <div class="dir-items-grid">${listHtml}</div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="dir-section">
+            <div class="dir-section-header">
+              <div class="dir-section-title">${subCat}</div>
+              <span class="nav-badge" style="font-size:12px;">共 ${totalInCat} 门专修课</span>
+            </div>
+            ${cropsHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderVideoGrid(videos) {
+      const grid = document.getElementById('videoGrid');
+      document.getElementById('gridCountText').textContent = `共展示 ${videos.length} 门课程`;
+      if (!videos.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1; padding:40px; text-align:center; color:var(--text-secondary);">
+          未找到匹配的《农广天地》课程，请尝试更换搜索词或点击右上角「多源采集同步」抓取新片源。
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = videos.map(v => {
+        const isPlanting = v.main_category === 'planting';
+        const isTravelogue = v.main_category === 'travelogue';
+        const catLabel = isPlanting
+          ? `🌱 ${v.sub_category}`
+          : (isTravelogue ? `🧭 ${v.sub_category}` : `🍲 ${v.sub_category}`);
+        const catClass = isPlanting
+          ? 'cat-planting'
+          : (isTravelogue ? 'cat-travelogue' : 'cat-food');
+        const qClass = v.needs_enhancement ? 'q-sd' : 'q-hd';
+        const qText = v.needs_enhancement ? `🔧 ${v.resolution} (支持超清重制)` : `💎 ${v.resolution} · 画质 ${v.quality_score}分`;
+        const tagsHtml = (v.tags || []).slice(0, 4).map(t => `<span class="mini-tag">#${t}</span>`).join('');
+
+        return `
+          <article class="video-card" onclick="openVideo('${v.id}')">
+            <div class="thumb-wrap">
+              <img src="${v.thumbnail}" alt="${v.title}" loading="lazy" />
+              <span class="thumb-quality ${qClass}">${qText}</span>
+              <span class="thumb-duration">${v.duration}</span>
+            </div>
+            <div class="card-body">
+              <div class="card-cat-row">
+                <span class="cat-tag ${catClass}">${catLabel}</span>
+                <span style="color:var(--text-secondary);">${v.crop_or_dish || ''}</span>
+              </div>
+              <h3 class="card-title">${v.title}</h3>
+              <p class="card-desc">${v.description}</p>
+              <div class="card-tags">${tagsHtml}</div>
+              <div class="card-footer">
+                <span>📺 ${v.source_platform}</span>
+                <span>🔥 ${(v.views || 10000).toLocaleString()} 次学习 · ${v.publish_date}</span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function openVideo(videoId) {
+      const v = allVideos.find(item => item.id === videoId);
+      if (!v) return;
+      currentVideo = v;
+
+      const theater = document.getElementById('watchTheater');
+      theater.classList.add('open');
+      theater.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      document.getElementById('watchTitle').textContent = v.title;
+      document.getElementById('watchInfoLine').textContent =
+        `${v.episode_code} · 分类：${v.sub_category} · 分辨率：${v.resolution}（画质评分 ${v.quality_score}/100） · 发布于 ${v.publish_date}`;
+      document.getElementById('watchDesc').textContent = v.description;
+
+      // 设置播放器视频流（支持 CCTV 官方 HLS m3u8 代理流与本地 FFmpeg 超分 MP4 流）
+      playStreamInPlayer(v.embed_url);
+
+      // 根据视频类型与画质状态自动配置最佳实时增强滤镜
+      const resBadge = document.getElementById('playerResBadge');
+      if (v.needs_enhancement) {
+        resBadge.textContent = `⚠️ 原片 ${v.resolution} (已自动开启实时锐化)`;
+        resBadge.className = 'badge-pill badge-warn';
+        setRealtimeFilter(v.main_category === 'food' ? 'filter-food' : 'filter-oldtv');
+      } else {
+        resBadge.textContent = `💎 ${v.resolution} 官方高清源`;
+        resBadge.className = 'badge-pill badge-hd';
+        setRealtimeFilter(v.main_category === 'food' ? 'filter-food' : 'filter-leaf');
+      }
+
+      // 外链地址（央视网、B站、YouTube）
+      const encodedCrop = encodeURIComponent(`农广天地 ${v.crop_or_dish || v.title}`);
+      document.getElementById('linkOfficialSource').href = v.source_url || 'https://tv.cctv.com/lm/ngtd/';
+      document.getElementById('linkBiliSearch').href = `https://search.bilibili.com/all?keyword=${encodedCrop}`;
+      document.getElementById('linkYtSearch').href = `https://www.youtube.com/results?search_query=${encodedCrop}`;
+
+      // 渲染农技参数卡 / 美食工艺卡 / CCTV-9 Travelogue 剧集档案卡
+      document.getElementById('techCardTitle').textContent =
+        v.main_category === 'planting'
+          ? `🌱 【${v.crop_or_dish}】标准化种植技术参数卡`
+          : (v.main_category === 'travelogue'
+              ? `🌍 CCTV-9 Travelogue · 【${v.crop_or_dish}】English Episode Guide`
+              : `🍲 【${v.crop_or_dish}】传统美食配料与核心工艺卡`);
+
+      const metrics = v.tech_metrics || {};
+      const metricsGrid = document.getElementById('techMetricsGrid');
+      metricsGrid.innerHTML = Object.entries(metrics).map(([k, val]) => `
+        <div class="metric-item">
+          <div class="metric-key">${k}</div>
+          <div class="metric-val">${val}</div>
+        </div>
+      `).join('');
+
+      // 渲染章节时间戳
+      const chapterList = document.getElementById('chapterList');
+      chapterList.innerHTML = (v.chapters || []).map(ch => `
+        <div class="chapter-item" onclick="seekVideo(${ch.seconds || 0})">
+          <span class="chapter-time">${ch.time}</span>
+          <span>${ch.title}</span>
+        </div>
+      `).join('');
+
+      updateBookmarkButton();
+      await loadStudyNotes(v.id);
+    }
+
+    function seekVideo(seconds) {
+      const player = document.getElementById('mainVideoPlayer');
+      // 演示流长度为8秒时按比例映射，长视频直接跳转真实秒数
+      if (player.duration && player.duration < 30 && seconds > player.duration) {
+        player.currentTime = (seconds % Math.floor(player.duration));
+      } else {
+        player.currentTime = seconds;
+      }
+      player.play();
+    }
+
+    function setRealtimeFilter(filterClass, btnEl) {
+      const player = document.getElementById('mainVideoPlayer');
+      player.className = filterClass === 'none' ? '' : filterClass;
+      const badge = document.getElementById('playerFilterBadge');
+      const labels = {
+        'none': '画质增强：已关闭（原始画面）',
+        'filter-leaf': '画质增强：🌿 植保叶脉/芽点卷积锐化 ON',
+        'filter-oldtv': '画质增强：📺 老片去雾去噪+对比度拉伸 ON',
+        'filter-food': '画质增强：🍲 乡土美食色彩还原增艳 ON'
+      };
+      badge.textContent = labels[filterClass] || labels['filter-leaf'];
+
+      if (btnEl) {
+        document.querySelectorAll('.enhancer-toolbar .preset-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+      }
+    }
+
+    async function runBackendFfmpegEnhance() {
+      if (!currentVideo) return;
+      const btn = document.getElementById('btnFfmpegEnhance');
+      const origText = btn.textContent;
+      btn.textContent = '⏳ FFmpeg 正在超分重制 1080P...';
+      btn.disabled = true;
+
+      try {
+        const preset = currentVideo.main_category === 'food' ? 'food_vivid' : 'leaf_detail';
+        const res = await fetch('/api/enhance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ video_id: currentVideo.id, preset })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          playStreamInPlayer(`${data.enhanced_stream_url}?t=${Date.now()}`);
+
+          const resBadge = document.getElementById('playerResBadge');
+          resBadge.textContent = `💎 1080P (FFmpeg 超分重制完成 · 耗时 ${data.elapsed_sec}s)`;
+          resBadge.className = 'badge-pill badge-hd';
+
+          await fetchStats();
+          await loadVideos(document.getElementById('searchInput').value);
+          alert(
+            `✅ FFmpeg 1080P 超清重制完成！\n` +
+            `• 使用滤镜预设：${data.preset_used}\n` +
+            `• 处理前分辨率：${data.before.width}x${data.before.height} (${data.before.bit_rate_kbps} kbps)\n` +
+            `• 处理后分辨率：${data.after.width}x${data.after.height} (${data.after.bit_rate_kbps} kbps)\n` +
+            `已自动切换播放器至 1080P 重制流！`
+          );
+        }
+      } catch (e) {
+        alert('FFmpeg 增强请求出错: ' + e.message);
+      } finally {
+        btn.textContent = origText;
+        btn.disabled = false;
+      }
+    }
+
+    async function loadStudyNotes(videoId) {
+      let notes = [];
+      if (isStaticCloud) {
+        const allLocal = JSON.parse(localStorage.getItem('ngtd_notes') || '{}');
+        notes = allLocal[videoId] || [];
+      } else {
+        const res = await fetch(`/api/notes?video_id=${encodeURIComponent(videoId)}`);
+        const data = await res.json();
+        notes = data.notes || [];
+      }
+      const list = document.getElementById('notesList');
+      if (!notes.length) {
+        list.innerHTML = `<div style="color:var(--text-secondary); font-size:12px;">暂无随堂笔记，可在上方输入框记录关键农技要点。</div>`;
+        return;
+      }
+      list.innerHTML = notes.map(n => `
+        <div class="note-card">
+          <div style="display:flex; justify-content:space-between; color:#fbbf24; font-size:11px; margin-bottom:3px;">
+            <span>⏱️ 视频节点 ${n.timestamp_str}</span>
+            <span>${n.created_at}</span>
+          </div>
+          <div>${n.content}</div>
+        </div>
+      `).join('');
+    }
+
+    async function saveStudyNote() {
+      if (!currentVideo) return;
+      const input = document.getElementById('noteInput');
+      const content = input.value.trim();
+      if (!content) return;
+
+      const player = document.getElementById('mainVideoPlayer');
+      const sec = Math.floor(player.currentTime || 0);
+      const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+      const ss = String(sec % 60).padStart(2, '0');
+
+      if (isStaticCloud) {
+        const allLocal = JSON.parse(localStorage.getItem('ngtd_notes') || '{}');
+        if (!allLocal[currentVideo.id]) allLocal[currentVideo.id] = [];
+        allLocal[currentVideo.id].unshift({
+          timestamp_str: `${mm}:${ss}`,
+          content,
+          created_at: new Date().toISOString().slice(0, 16).replace('T', ' ')
+        });
+        localStorage.setItem('ngtd_notes', JSON.stringify(allLocal));
+      } else {
+        await fetch('/api/notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            video_id: currentVideo.id,
+            timestamp_str: `${mm}:${ss}`,
+            content
+          })
+        });
+      }
+      input.value = '';
+      await loadStudyNotes(currentVideo.id);
+    }
+
+    function copyTechMetrics() {
+      if (!currentVideo) return;
+      const metrics = currentVideo.tech_metrics || {};
+      const lines = [`# ${currentVideo.title} - 核心技术参数`];
+      for (const [k, v] of Object.entries(metrics)) {
+        lines.push(`- **${k}**：${v}`);
+      }
+      navigator.clipboard.writeText(lines.join('\n'));
+      alert('已复制本课农技/美食核心参数到剪贴板！');
+    }
+
+    async function exportNotesMarkdown() {
+      if (!currentVideo) return;
+      const res = await fetch(`/api/notes?video_id=${encodeURIComponent(currentVideo.id)}`);
+      const data = await res.json();
+      const notes = data.notes || [];
+      let md = `# 《农广天地》学习笔记：${currentVideo.title}\n\n`;
+      md += `## 一、核心技术参数\n`;
+      for (const [k, v] of Object.entries(currentVideo.tech_metrics || {})) {
+        md += `- **${k}**：${v}\n`;
+      }
+      md += `\n## 二、随堂时间戳笔记\n`;
+      notes.forEach(n => {
+        md += `- **[${n.timestamp_str}]** ${n.content} _(${n.created_at})_\n`;
+      });
+      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentVideo.crop_or_dish || '农广天地'}_学习笔记.md`;
+      a.click();
+    }
+
+    function toggleBookmarkCurrent() {
+      if (!currentVideo) return;
+      const idx = bookmarkedIds.indexOf(currentVideo.id);
+      if (idx === -1) {
+        bookmarkedIds.push(currentVideo.id);
+      } else {
+        bookmarkedIds.splice(idx, 1);
+      }
+      localStorage.setItem('ngtd_bookmarks', JSON.stringify(bookmarkedIds));
+      updateBookmarkButton();
+    }
+
+    function updateBookmarkButton() {
+      if (!currentVideo) return;
+      const btn = document.getElementById('btnBookmarkCurrent');
+      const saved = bookmarkedIds.includes(currentVideo.id);
+      btn.textContent = saved ? '🌟 已收藏本课' : '⭐ 收藏本课';
+    }
+
+    function filterBookmarks(el) {
+      document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
+      if (el) el.classList.add('active');
+      const filtered = allVideos.filter(v => bookmarkedIds.includes(v.id));
+      document.getElementById('gridSectionTitle').textContent = '⭐ 我收藏的农广天地课程';
+      renderVideoGrid(filtered);
+    }
+
+    function selectNav(mainCat, subCat, el) {
+      currentMainCat = mainCat;
+      currentSubCat = subCat;
+      currentQuality = 'all';
+      document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
+      if (el) el.classList.add('active');
+
+      const titleMap = {
+        'all': '📺 全部《农广天地》种植、美食与 CCTV-9 英语《Travelogue》课程',
+        'planting': `🌱 种植技术学院 · ${subCat === 'all' ? '全部种植课程' : subCat}`,
+        'food': `🍲 乡村美食工坊 · ${subCat === 'all' ? '全部美食课程' : subCat}`,
+        'travelogue': `🌍 CCTV-9 英语《Travelogue》(旅游指南) · ${subCat === 'all' ? 'All Full Episodes' : subCat}`
+      };
+      document.getElementById('gridSectionTitle').textContent = titleMap[mainCat] || '课程列表';
+      syncMobileTabBar(mainCat);
+      closeMobileDrawer();
+      loadVideos(document.getElementById('searchInput').value);
+    }
+
+    function toggleMobileDrawer() {
+      const sb = document.getElementById('mainSidebar');
+      const bd = document.getElementById('sidebarBackdrop');
+      sb.classList.toggle('drawer-open');
+      bd.classList.toggle('open');
+    }
+
+    function closeMobileDrawer() {
+      const sb = document.getElementById('mainSidebar');
+      const bd = document.getElementById('sidebarBackdrop');
+      if (sb) sb.classList.remove('drawer-open');
+      if (bd) bd.classList.remove('open');
+    }
+
+    function syncMobileTabBar(mainCat) {
+      document.querySelectorAll('#mobileTabBar .tab-item').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('data-tab') === mainCat);
+      });
+    }
+
+    function selectMobileTab(mainCat, tabEl) {
+      closeTheater();
+      document.getElementById('searchInput').value = '';
+      switchViewMode('cards');
+      selectNav(mainCat, 'all');
+      syncMobileTabBar(mainCat);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showGestureToast(msg) {
+      const toast = document.getElementById('gestureToast');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.remove('show'), 950);
+    }
+
+    function seekRelative(deltaSec) {
+      const player = document.getElementById('mainVideoPlayer');
+      if (!player) return;
+      player.currentTime = Math.max(0, (player.currentTime || 0) + deltaSec);
+      player.play().catch(() => {});
+      showGestureToast(deltaSec > 0 ? `⏩ 快进 ${deltaSec} 秒` : `⏪ 快退 ${Math.abs(deltaSec)} 秒`);
+    }
+
+    function togglePlayPause() {
+      const player = document.getElementById('mainVideoPlayer');
+      if (!player) return;
+      if (player.paused) {
+        player.play().catch(() => {});
+        showGestureToast('▶️ 继续播放');
+      } else {
+        player.pause();
+        showGestureToast('⏸️ 已暂停');
+      }
+    }
+
+    function cyclePlaybackSpeed() {
+      const player = document.getElementById('mainVideoPlayer');
+      currentSpeedIdx = (currentSpeedIdx + 1) % speedOptions.length;
+      const spd = speedOptions[currentSpeedIdx];
+      if (player) player.playbackRate = spd;
+      const btn = document.getElementById('btnSpeed');
+      if (btn) btn.textContent = `🚀 倍速 ${spd}x`;
+      showGestureToast(`🚀 播放速度 ${spd}x`);
+    }
+
+    async function togglePiP() {
+      const player = document.getElementById('mainVideoPlayer');
+      try {
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+        } else if (player.requestPictureInPicture) {
+          await player.requestPictureInPicture();
+        } else if (player.webkitSetPresentationMode) {
+          player.webkitSetPresentationMode('picture-in-picture');
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    function toggleFullscreen() {
+      const player = document.getElementById('mainVideoPlayer');
+      const stage = document.getElementById('playerStage');
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      } else if (player.webkitEnterFullscreen) {
+        player.webkitEnterFullscreen();
+      } else if (stage.requestFullscreen) {
+        stage.requestFullscreen().catch(() => {});
+      }
+    }
+
+    function handlePlayerDoubleTap(e) {
+      const stage = document.getElementById('playerStage');
+      const rect = stage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      if (x < rect.width * 0.4) {
+        seekRelative(-10);
+      } else if (x > rect.width * 0.6) {
+        seekRelative(10);
+      } else {
+        togglePlayPause();
+      }
+    }
+
+    function openMobileAppModal() {
+      const modal = document.getElementById('mobileAppModal');
+      const urlBox = document.getElementById('lanUrlBox');
+      const qrImg = document.getElementById('qrCodeImg');
+      urlBox.textContent = serverLanUrl;
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=${encodeURIComponent(serverLanUrl)}`;
+      modal.classList.add('open');
+    }
+
+    function closeMobileAppModal() {
+      document.getElementById('mobileAppModal').classList.remove('open');
+    }
+
+    function selectQualityFilter(qMode, el) {
+      currentMainCat = 'all';
+      currentSubCat = 'all';
+      currentQuality = qMode;
+      document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
+      if (el) el.classList.add('active');
+      document.getElementById('gridSectionTitle').textContent =
+        qMode === 'hd' ? '💎 1080P 超清《农广天地》课程' : '🔧 早期标清待增强课程（支持一键 FFmpeg 1080P 重制）';
+      loadVideos();
+    }
+
+    function quickChip(mode, el) {
+      document.querySelectorAll('.chips-bar .chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('searchInput').value = '';
+      currentMainCat = 'all';
+      currentSubCat = 'all';
+      currentQuality = 'all';
+      loadVideos('');
+    }
+
+    function quickSearch(kw, el) {
+      document.querySelectorAll('.chips-bar .chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('searchInput').value = kw;
+      currentMainCat = 'all';
+      currentSubCat = 'all';
+      currentQuality = 'all';
+      document.getElementById('gridSectionTitle').textContent = `🔍 「${kw}」专题课程检索结果`;
+      loadVideos(kw);
+    }
+
+    function triggerSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      document.getElementById('gridSectionTitle').textContent = q ? `🔍 「${q}」检索结果` : '📺 全部《农广天地》课程';
+      loadVideos(q);
+    }
+
+    function closeTheater() {
+      const player = document.getElementById('mainVideoPlayer');
+      player.pause();
+      document.getElementById('watchTheater').classList.remove('open');
+    }
+
+    function resetHome() {
+      closeTheater();
+      document.getElementById('searchInput').value = '';
+      selectNav('all', 'all', document.querySelector('[data-nav="all"]'));
+    }
+
+    function openCrawlerModal() {
+      document.getElementById('crawlerModal').classList.add('open');
+    }
+
+    function closeCrawlerModal() {
+      document.getElementById('crawlerModal').classList.remove('open');
+    }
+
+    async function runLiveCrawl() {
+      const kw = document.getElementById('crawlKeywordInput').value.trim();
+      const logBox = document.getElementById('crawlerLogBox');
+      logBox.textContent += `\n[*] 正在请求央视网与 YouTube 接口检索: "${kw}" ...`;
+      try {
+        const res = await fetch('/api/crawl', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ keyword: kw })
+        });
+        const data = await res.json();
+        logBox.textContent += `\n[+] ${data.message}`;
+        await fetchStats();
+        await loadVideos();
+      } catch (e) {
+        logBox.textContent += `\n[!] 同步异常: ${e.message}`;
+      }
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    initApp();
+  </script>
+</body>
+</html>

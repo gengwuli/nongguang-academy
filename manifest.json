@@ -1,0 +1,19 @@
+{
+  "name": "农广学堂 · CCTV农广天地移动App",
+  "short_name": "农广学堂",
+  "description": "CCTV《农广天地》种植技术、乡村美食与乡土风物游记高清移动学习App",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f1511",
+  "theme_color": "#0f1511",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
